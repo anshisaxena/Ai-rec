@@ -1,0 +1,96 @@
+<div class="reconciliation-page">
+
+  <div class="upload-section">
+
+    <!-- Source Document -->
+    <div class="upload-box">
+      <h3>Source document</h3>
+
+      <ng-container *ngIf="!files.source; else sourceUploading">
+        <label class="file-drop">
+          <input type="file" (change)="onFileSelected($event, 'source')" hidden>
+          <svg xmlns="http://www.w3.org/2000/svg" class="upload-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 12V4m0 0l-4 4m4-4l4 4" />
+          </svg>
+          <span>Drag or browse</span>
+        </label>
+      </ng-container>
+
+      <ng-template #sourceUploading>
+        <p class="file-name">{{ files.source?.name }}</p>
+        <div class="progress-bar">
+          <div class="progress-fill blue" [style.width.%]="uploadProgress.source">
+            <span class="progress-text">{{ uploadProgress.source }}%</span>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+
+    <!-- Reference Document 1 -->
+    <div class="upload-box">
+      <h3>Reference document 1</h3>
+
+      <ng-container *ngIf="!files.reference1; else reference1Uploading">
+        <label class="file-drop">
+          <input type="file" (change)="onFileSelected($event, 'reference1')" hidden>
+          <svg xmlns="http://www.w3.org/2000/svg" class="upload-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 12V4m0 0l-4 4m4-4l4 4" />
+          </svg>
+          <span>Drag or browse</span>
+        </label>
+      </ng-container>
+
+      <ng-template #reference1Uploading>
+        <p class="file-name">{{ files.reference1?.name }}</p>
+        <div class="progress-bar">
+          <div class="progress-fill blue" [style.width.%]="uploadProgress.reference1">
+            <span class="progress-text">{{ uploadProgress.reference1 }}%</span>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+
+    <!-- Reference Document 2 -->
+    <div class="upload-box">
+      <h3>Reference document 2</h3>
+
+      <ng-container *ngIf="!files.reference2; else reference2Uploading">
+        <label class="file-drop">
+          <input type="file" (change)="onFileSelected($event, 'reference2')" hidden>
+          <svg xmlns="http://www.w3.org/2000/svg" class="upload-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 12V4m0 0l-4 4m4-4l4 4" />
+          </svg>
+          <span>Drag or browse</span>
+        </label>
+      </ng-container>
+
+      <ng-template #reference2Uploading>
+        <p class="file-name">{{ files.reference2?.name }}</p>
+        <div class="progress-bar">
+          <div class="progress-fill blue" [style.width.%]="uploadProgress.reference2">
+            <span class="progress-text">{{ uploadProgress.reference2 }}%</span>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+
+  </div>
+
+  <!-- Run Buttons -->
+  <button class="run-btn" (click)="show()">Reference List</button>
+  <button class="run-btn" (click)="runReconciliation()">Run AI Reconciliation</button>
+
+  <!-- Show reference list only when ready -->
+  <div class="reference-list" *ngIf="showReferenceList">
+    <h3>Reference documents</h3>
+    <ul>
+      <li *ngFor="let doc of referenceDocsFromServer">
+        <a [href]="getDocUrl(doc)" target="_blank">{{ doc }}</a>
+      </li>
+    </ul>
+  </div>
+
+</div>

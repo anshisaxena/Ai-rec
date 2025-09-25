@@ -1,0 +1,77 @@
+<div class="dashboard-container">
+
+  <!-- Top Score and Severities -->
+  <div class="top-row">
+    <div class="compliance-score-box">
+      <div class="score-label">compliance<br />Score</div>
+      <div class="score-value">89%</div>
+    </div>
+
+    <div class="severity-box high">
+      <div>High Severity</div>
+      <div class="count">2</div>
+    </div>
+
+    <div class="severity-box medium">
+      <div>Medium Severity</div>
+      <div class="count">1</div>
+    </div>
+
+    <div class="severity-box low">
+      <div>Low Severity</div>
+      <div class="count">1</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="active">Results</button>
+    <button>Analytics</button>
+  </div>
+
+  <!-- Table and Side Box -->
+  <div class="main-content">
+    <!-- Table + Inline Violation Box -->
+    <div class="table-section">
+      <h4>Non compliance issues</h4>
+      <table>
+        <thead>
+          <tr>
+            <th>Page</th>
+            <th>Severity</th>
+            <th>Confidence</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let issue of issues">
+            <td>{{ issue.page }}</td>
+            <td>{{ issue.severity }}</td>
+            <td>{{ issue.confidence }}</td>
+            <td><button (click)="selectIssue(issue)">View details</button></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Inline Violation Details -->
+      <div *ngIf="selectedIssue" class="violation-inline">
+        <h4>Violation Details</h4>
+        <p><strong>Page & Section:</strong> {{ selectedIssue.page }}</p>
+        <p><strong>Regulatory Reference:</strong> {{ selectedIssue.reference }}</p>
+        <p><strong>Non-Compliant Text:</strong> {{ selectedIssue.text }}</p>
+        <p><strong>Explanation:</strong> {{ selectedIssue.explanation }}</p>
+        <p><strong>Remediation Recommendation:</strong> {{ selectedIssue.recommendation }}</p>
+      </div>
+    </div>
+
+    <!-- Right-Side Violation Details -->
+    <div class="violation-right">
+      <h4>Violation Details</h4>
+      <p><strong>Page & Section:</strong> page no.</p>
+      <p><strong>Regulatory Reference:</strong> document name</p>
+      <p><strong>Non-Compliant Text:</strong></p>
+      <p><strong>Explanation:</strong></p>
+      <p><strong>Remediation Recommendation:</strong></p>
+    </div>
+  </div>
+</div>
