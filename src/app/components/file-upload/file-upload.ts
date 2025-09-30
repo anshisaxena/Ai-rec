@@ -12,6 +12,8 @@ import { Router } from '@angular/router';
 })
 export class FileUpload implements OnInit {
 
+  private readonly BASE_URL = 'http://127.0.0.1:8080';
+
   files: {
     source: File | null,
     reference1: File | null,
@@ -31,6 +33,9 @@ export class FileUpload implements OnInit {
     reference2: -1
   };
 
+  uploadResponse: any = null; 
+  jobId: string | null = null; 
+
   constructor(
     private http: HttpClient,
     private router: Router,
@@ -44,39 +49,60 @@ export class FileUpload implements OnInit {
     if (!file) return;
 
     this.files[type] = file;
-    this.uploadFile(file, type);
+
+    // Automatically upload when mandatory files are selected
+    if (this.files.source && this.files.reference1) {
+      this.uploadAllFiles();
+    }
   }
 
-  uploadFile(file: File, type: 'source' | 'reference1' | 'reference2') {
+  uploadAllFiles() {
+    if (!this.files.source || !this.files.reference1) {
+      alert('Please select Source and Reference 1 before uploading.');
+      return;
+    }
+
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('source_file', this.files.source);
+    formData.append('reference_file1', this.files.reference1);
+    if (this.files.reference2) {
+      formData.append('reference_file2', this.files.reference2);
+    }
 
-    this.uploadProgress[type] = 0;
+    this.uploadProgress = { source: 0, reference1: 0, reference2: this.files.reference2 ? 0 : -1 };
 
-    this.http.post('http://127.0.0.1:8000/upload/file', formData, {
+    this.http.post(`${this.BASE_URL}/upload/upload-pdfs/`, formData, {
       reportProgress: true,
       observe: 'events'
     }).subscribe({
       next: (event: any) => {
-        if (event.type === HttpEventType.UploadProgress) {
-          if (event.total) {
-            const percentDone = Math.round(100 * event.loaded / event.total);
-            this.uploadProgress[type] = percentDone;
-          } else {
-            this.uploadProgress[type] = 50;
-          }
+        if (event.type === HttpEventType.UploadProgress && event.total) {
+          const percentDone = Math.round(100 * event.loaded / event.total);
+          this.uploadProgress.source = percentDone;
+          this.uploadProgress.reference1 = percentDone;
+          if (this.files.reference2) this.uploadProgress.reference2 = percentDone;
           this.cd.detectChanges();
         } else if (event.type === HttpEventType.Response) {
-          this.uploadProgress[type] = 100;
+          this.uploadProgress.source = 100;
+          this.uploadProgress.reference1 = 100;
+          if (this.files.reference2) this.uploadProgress.reference2 = 100;
+          this.uploadResponse = event.body; 
+          this.jobId = event.body?.job_id?.trim();   
           this.cd.detectChanges();
-          console.log(`${type} uploaded successfully.`);
+          console.log('All files uploaded successfully.', event.body);
+
+          alert('Upload complete! Job ID: ' + this.jobId);
         }
       },
       error: (err) => {
         console.error('Upload error:', err);
-        this.uploadProgress[type] = -1;
+        this.uploadProgress = { source: -1, reference1: -1, reference2: this.files.reference2 ? -1 : -1 };
       }
     });
+  }
+
+  uploadFile(file: File, type: 'source' | 'reference1' | 'reference2') {
+    // Unused, kept for reference
   }
 
   show() {
@@ -85,16 +111,27 @@ export class FileUpload implements OnInit {
   }
 
   runReconciliation() {
-    this.router.navigate(['/result'], {
-      state: {
-        sourceDoc: this.files.source?.name,
-        referenceDocs: [this.files.reference1?.name, this.files.reference2?.name]
-      }
-    });
+    if (!this.jobId) {
+      alert('Please upload at least Source and Reference 1 first.');
+      return;
+    }
+
+    const trimmedJobId = this.jobId.trim();
+    this.http.post(`${this.BASE_URL}/reconcile/reconcile/${trimmedJobId}`, {})
+      .subscribe({
+        next: (res) => {
+          console.log('Reconciliation result:', res);
+          this.router.navigate(['/result'], { state: { result: res } });
+          this.cd.detectChanges();
+        },
+        error: (err) => {
+          console.error('Error fetching reconciliation result:', err);
+        }
+      });
   }
 
   fetchReferenceDocs() {
-    this.http.get<string[]>('http://127.0.0.1:8000/upload/list-documents')
+    this.http.get<string[]>(`${this.BASE_URL}/upload/list-documents`)
       .subscribe({
         next: (docs) => {
           this.referenceDocsFromServer = docs;
@@ -106,6 +143,6 @@ export class FileUpload implements OnInit {
   }
 
   getDocUrl(docName: string): string {
-    return `http://127.0.0.1:8000/upload/documents/${encodeURIComponent(docName)}`;
+    return `${this.BASE_URL}/upload/documents/${encodeURIComponent(docName)}`;
   }
 }

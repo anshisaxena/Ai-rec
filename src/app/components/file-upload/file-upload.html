@@ -4,8 +4,7 @@
 
     <!-- Source Document -->
     <div class="upload-box">
-      <h3>Source document</h3>
-
+      <h3>Source document <span class="required">*</span></h3>
       <ng-container *ngIf="!files.source; else sourceUploading">
         <label class="file-drop">
           <input type="file" (change)="onFileSelected($event, 'source')" hidden>
@@ -16,7 +15,6 @@
           <span>Drag or browse</span>
         </label>
       </ng-container>
-
       <ng-template #sourceUploading>
         <p class="file-name">{{ files.source?.name }}</p>
         <div class="progress-bar">
@@ -29,8 +27,7 @@
 
     <!-- Reference Document 1 -->
     <div class="upload-box">
-      <h3>Reference document 1</h3>
-
+      <h3>Reference document 1 <span class="required">*</span></h3>
       <ng-container *ngIf="!files.reference1; else reference1Uploading">
         <label class="file-drop">
           <input type="file" (change)="onFileSelected($event, 'reference1')" hidden>
@@ -41,7 +38,6 @@
           <span>Drag or browse</span>
         </label>
       </ng-container>
-
       <ng-template #reference1Uploading>
         <p class="file-name">{{ files.reference1?.name }}</p>
         <div class="progress-bar">
@@ -54,8 +50,7 @@
 
     <!-- Reference Document 2 -->
     <div class="upload-box">
-      <h3>Reference document 2</h3>
-
+      <h3>Reference document 2 <span class="optional">(Optional)</span></h3>
       <ng-container *ngIf="!files.reference2; else reference2Uploading">
         <label class="file-drop">
           <input type="file" (change)="onFileSelected($event, 'reference2')" hidden>
@@ -66,7 +61,6 @@
           <span>Drag or browse</span>
         </label>
       </ng-container>
-
       <ng-template #reference2Uploading>
         <p class="file-name">{{ files.reference2?.name }}</p>
         <div class="progress-bar">
@@ -81,7 +75,7 @@
 
   <!-- Run Buttons -->
   <button class="run-btn" (click)="show()">Reference List</button>
-  <button class="run-btn" (click)="runReconciliation()">Run AI Reconciliation</button>
+  <button class="run-btn" [disabled]="!jobId" (click)="runReconciliation()">Run AI Reconciliation</button>
 
   <!-- Show reference list only when ready -->
   <div class="reference-list" *ngIf="showReferenceList">

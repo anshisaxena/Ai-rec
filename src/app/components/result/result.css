@@ -68,18 +68,23 @@
 
 /* Tabs */
 .tabs {
-  margin-bottom: 20px;
+  margin: 70px 0 40px 0; /* ⬅️ more space above and below */
 }
 .tabs button {
-  padding: 6px 14px;
+  padding: 10px 18px;
   margin-right: 10px;
   font-weight: bold;
-  border: 2px solid #000;
-  background: white;
+  font-size: large;
+  border: 2px solid #007bff; /* blue border */
+  background: #007bff;       /* blue background */
+  color: #fff;               /* white text */
   cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.3s ease;
 }
 .tabs button.active {
-  background: #eee;
+  background: #fff;          /* white background */
+  color: #007bff;            /* blue text */
 }
 
 /* Main content section */

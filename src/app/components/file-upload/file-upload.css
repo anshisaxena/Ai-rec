@@ -180,3 +180,14 @@ h2 {
     flex-direction: column;
   }
 }
+.required {
+  color: red;
+  margin-left: 4px;
+  font-weight: bold;
+}
+
+.optional {
+  color: #555;
+  font-size: 12px;
+  margin-left: 4px;
+}
